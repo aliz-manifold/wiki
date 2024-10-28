@@ -1,32 +1,543 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Manifold Data REST API",
+    "version": "v1"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
+      "url": "https://api.analytics.autos",
+      "description": "Manifold REST API Base URL"
     }
   ],
   "paths": {
-    "/plants": {
+    "/connections": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "tags": [
+          "Connection"
+        ],
+        "summary": "List Connections",
+        "description": "List all of the connections.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionListResponseModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionListResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionListResponseModel"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/drivers": {
+      "get": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "List Drivers",
+        "description": "List all of the drivers in the connected account.",
         "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverListResponseModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverListResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverListResponseModel"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/drivers/{driverId}": {
+      "get": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Get Driver",
+        "description": "Get the details of a specific driver.",
+        "parameters": [
+          {
+            "name": "driverId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Driver"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Driver"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Driver"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/safety-events": {
+      "get": {
+        "tags": [
+          "SafetyEvents"
+        ],
+        "summary": "List Safety Events",
+        "description": "List all safety events detected by the provider.",
+        "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "vehicleIds",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "name": "driverIds",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafetyEvent"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafetyEvent"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafetyEvent"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/safety-events/types": {
+      "get": {
+        "tags": [
+          "SafetyEvents"
+        ],
+        "summary": "List Safety Event Types",
+        "description": "List all of the safety event types.",
+        "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafetyEventType"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafetyEventType"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SafetyEventType"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/safety-events/{id}/thumbnails/{camPos}": {
+      "get": {
+        "tags": [
+          "SafetyEvents"
+        ],
+        "summary": "Incident thumbnail Url",
+        "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "camPos",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/safety-events/{id}/videos/{camPos}": {
+      "get": {
+        "tags": [
+          "SafetyEvents"
+        ],
+        "summary": "Incident video Url",
+        "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "camPos",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/trips/locations": {
+      "get": {
+        "tags": [
+          "Trip"
+        ],
+        "summary": "Historical Trips Locations",
+        "description": "List the historical breadcrumb locations for a connection.",
+        "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GpsResponseModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GpsResponseModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GpsResponseModel"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/trips": {
+      "get": {
+        "tags": [
+          "Trip"
+        ],
+        "summary": "List Trips",
+        "description": "List all trips in the connected account. Trips define a period of time where a vehicle is in motion.",
+        "parameters": [
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "a connection id",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "the date-time notation as defined by RFC 3339, section 5.6, for example, 2017-07-21T17:32:28Z",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "the date-time notation as defined by RFC 3339, section 5.6, for example, 2017-07-21T17:32:28Z",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "a cursor to be used for pagination",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "a limit to be used for pagination",
+            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -35,96 +546,210 @@
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripListResponseModel"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
+                  "$ref": "#/components/schemas/TripListResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripListResponseModel"
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
+            "description": "Bad Request"
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+          "429": {
+            "description": "Rate limited"
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/vehicles": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "List Vehicles",
+        "description": "List all of the vehicles in the connected account.",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleListResponseModel"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/VehicleListResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleListResponseModel"
                 }
               }
             }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/vehicles/{vehicleId}": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Get Vehicle",
+        "description": "Get the details of a specific vehicle.",
+        "parameters": [
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleResponseModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleResponseModel"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/vehicles/{vehicleId}/distance-driven": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Historical Vehicle Distance Driven",
+        "description": "List the historical distance driven of a specific vehicle.",
+        "parameters": [
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Connection-Id",
+            "in": "header",
+            "description": "",
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDistanceDrivenResponseModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDistanceDrivenResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDistanceDrivenResponseModel"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
           }
         }
       }
@@ -132,64 +757,672 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "CameraMedia": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "videoType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "name": {
-            "description": "The name of the plant",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+          "providerId": {
+            "type": "string",
+            "format": "uuid"
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+          "healthStatus": {
+            "$ref": "#/components/schemas/ConnectionHealthStatus"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
-        ]
+        },
+        "additionalProperties": false
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
+      "ConnectionHealthStatus": {
+        "enum": [
+          1,
+          2,
+          3,
+          4
         ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ConnectionListResponseModel": {
         "type": "object",
         "properties": {
-          "error": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            },
+            "description": "Response data",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
+      },
+      "Driver": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DriverStatus"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "rawDriverId": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseState": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DriverListResponseModel": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Driver"
+            },
+            "description": "Response data",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
+      },
+      "DriverStatus": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Gps": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GpsResponseModel": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Gps"
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
+      },
+      "HttpStatusCode": {
+        "enum": [
+          100,
+          101,
+          102,
+          103,
+          200,
+          201,
+          202,
+          203,
+          204,
+          205,
+          206,
+          207,
+          208,
+          226,
+          300,
+          301,
+          302,
+          303,
+          304,
+          305,
+          306,
+          307,
+          308,
+          400,
+          401,
+          402,
+          403,
+          404,
+          405,
+          406,
+          407,
+          408,
+          409,
+          410,
+          411,
+          412,
+          413,
+          414,
+          415,
+          416,
+          417,
+          421,
+          422,
+          423,
+          424,
+          426,
+          428,
+          429,
+          431,
+          451,
+          500,
+          501,
+          502,
+          503,
+          504,
+          505,
+          506,
+          507,
+          508,
+          510,
+          511
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SafetyEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rawIncidentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startLatitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "startLongitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "endLatitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "endLongitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationSeconds": {
             "type": "integer",
             "format": "int32"
           },
-          "message": {
-            "type": "string"
+          "acceleration": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maxSpeed": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "minSpeed": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cameraMedia": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CameraMedia"
+            },
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Gets or sets the type of the safety event.",
+            "nullable": true
+          },
+          "logo": {
+            "type": "string",
+            "description": "Gets or sets the logo of the safety event.",
+            "nullable": true
+          },
+          "isExtended": {
+            "type": "boolean",
+            "description": "Gets or sets a value indicating whether the safety event is extended."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a safety event type."
+      },
+      "TimeSpan": {
+        "type": "object",
+        "properties": {
+          "ticks": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "hours": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "milliseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "microseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "nanoseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "seconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "totalDays": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalHours": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMilliseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMicroseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalNanoseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMinutes": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalSeconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Trip": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of trip, assigned by EF",
+            "format": "uuid"
+          },
+          "connectionId": {
+            "type": "string",
+            "description": "Connection Id of the trip",
+            "format": "uuid"
+          },
+          "distanceDrivenInKm": {
+            "type": "number",
+            "description": "Distance driven in this trip by the vehicle in KMs. can bu null if data was not provided",
+            "format": "double",
+            "nullable": true
+          },
+          "duration": {
+            "$ref": "#/components/schemas/TimeSpan"
+          },
+          "startedAt": {
+            "type": "string",
+            "description": "Start time of the trip",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "description": "End date of the trips",
+            "format": "date-time"
+          },
+          "startLocationLat": {
+            "type": "number",
+            "description": "Latitude of trip's start location",
+            "format": "double"
+          },
+          "startLocationLng": {
+            "type": "number",
+            "description": "Longitude of trip's start location",
+            "format": "double"
+          },
+          "endLocationLat": {
+            "type": "number",
+            "description": "Latitude of trip's end location",
+            "format": "double"
+          },
+          "endLocationLng": {
+            "type": "number",
+            "description": "Longitude of trip's end location",
+            "format": "double"
+          },
+          "maxSpeed": {
+            "type": "number",
+            "description": "Max speed of the vehicle in this trip in kmh",
+            "format": "double",
+            "nullable": true
+          },
+          "vehicle": {
+            "$ref": "#/components/schemas/Vehicle"
+          },
+          "driver": {
+            "$ref": "#/components/schemas/Driver"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TripListResponseModel": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trip"
+            },
+            "description": "Response data",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
+      },
+      "Vehicle": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "connectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vin": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VehicleDistanceDriven": {
+        "type": "object",
+        "properties": {
+          "distance": {
+            "type": "number",
+            "format": "double"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VehicleDistanceDrivenResponseModel": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/VehicleDistanceDriven"
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
+      },
+      "VehicleListResponseModel": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vehicle"
+            },
+            "description": "Response data",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
+      },
+      "VehicleResponseModel": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HttpStatusCode"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Vehicle"
+          },
+          "next": {
+            "type": "string",
+            "description": "A next field is present if more objects are available, containing the cursor for the next page. If no more objects exist, next will not be defined in the response.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response Model of the API"
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "ApiKey": {
+        "type": "apiKey",
+        "description": "API Key needed to access the endpoints. x-api-key: {API Key}",
+        "name": "X-API-KEY",
+        "in": "header"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ]
 }
